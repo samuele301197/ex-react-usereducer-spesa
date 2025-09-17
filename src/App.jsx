@@ -1,3 +1,5 @@
+import { useState, useReducer } from "react";
+
 function App() {
   const products = [
     { name: "Mela", price: 0.5 },
@@ -6,13 +8,40 @@ function App() {
     { name: "Pasta", price: 0.7 },
   ];
 
+  const [kart, setKart] = useState([]);
+  const handleChange = (product) => {
+    const isProductIn = kart.some((p) => p.name === product.name);
+    if (isProductIn) {
+      return;
+    }
+    setKart((curr) => [
+      ...curr,
+      {
+        ...product,
+        quantity: 1,
+      },
+    ]);
+  };
+
   return (
     <div>
       <h1>I miei Prodotti:</h1>
       <ul>
         {products.map((prod, index) => (
           <li key={index}>
-            {prod.name}, {prod.price}€
+            <p>
+              {prod.name}, {prod.price.toFixed(2)}€ ({prod.quantity})
+            </p>
+            <button onClick={() => handleChange(prod)}>Aggiungi</button>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Carrello</h2>
+      <ul>
+        {kart.map((item, index) => (
+          <li key={index}>
+            {item.name}, {item.price.toFixed(2)}€ ({item.quantity})
           </li>
         ))}
       </ul>
