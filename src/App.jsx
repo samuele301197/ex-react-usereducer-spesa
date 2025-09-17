@@ -9,9 +9,15 @@ function App() {
   ];
 
   const [kart, setKart] = useState([]);
+  const upProdQuantity = (name, quantity) => {
+    setKart((curr) =>
+      curr.map((p) => (p.name === name ? { ...p, quantity } : p))
+    );
+  };
   const handleChange = (product) => {
-    const isProductIn = kart.some((p) => p.name === product.name);
-    if (isProductIn) {
+    const addedProduct = kart.find((p) => p.name === product.name);
+    if (addedProduct) {
+      upProdQuantity(product.name, addedProduct.quantity + 1);
       return;
     }
     setKart((curr) => [
@@ -23,6 +29,12 @@ function App() {
     ]);
   };
 
+  const removeFromCart = (name) => {
+    setKart((curr) => curr.filter((p) => p.name !== name));
+  };
+
+  const total = kart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
   return (
     <div>
       <h1>I miei Prodotti:</h1>
@@ -30,7 +42,7 @@ function App() {
         {products.map((prod, index) => (
           <li key={index}>
             <p>
-              {prod.name}, {prod.price.toFixed(2)}€ ({prod.quantity})
+              {prod.name}, {prod.price.toFixed(2)}€
             </p>
             <button onClick={() => handleChange(prod)}>Aggiungi</button>
           </li>
@@ -41,7 +53,11 @@ function App() {
       <ul>
         {kart.map((item, index) => (
           <li key={index}>
-            {item.name}, {item.price.toFixed(2)}€ ({item.quantity})
+            <p>
+              {item.name}, {item.price.toFixed(2)}€ ({item.quantity})
+            </p>
+            <button onClick={() => removeFromCart(item.name)}>Rimuovi</button>
+            <h3>Totale: {total.toFixed(2)}€</h3>
           </li>
         ))}
       </ul>
